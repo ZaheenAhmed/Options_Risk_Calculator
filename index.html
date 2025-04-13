@@ -1,0 +1,95 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Options Risk Calculator</title>
+    <style>
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 400px;
+            margin: auto;
+        }
+        h1 {
+            text-align: center;
+            font-size: 1.5rem;
+        }
+        label, input {
+            display: block;
+            width: 100%;
+            margin: 10px 0;
+        }
+        input[type="number"] {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background: #1e1e1e;
+            color: white;
+        }
+        .result {
+            background: #1e1e1e;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .result p {
+            margin: 10px 0;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Options Risk Calculator</h1>
+        <label for="delta">Delta (0.30 - 0.50):</label>
+        <input type="number" id="delta" step="0.01" min="0.1" max="1" value="0.4">
+
+        <label for="stop">Chart Stop ($):</label>
+        <input type="number" id="stop" step="0.1" value="2">
+
+        <label for="maxRisk">Max Risk ($):</label>
+        <input type="number" id="maxRisk" step="10" value="100">
+
+        <div class="result" id="result">
+            <p>Est. Loss per Contract: $0</p>
+            <p>Contracts to Buy: 0</p>
+        </div>
+    </div>
+
+    <script>
+        const deltaInput = document.getElementById("delta");
+        const stopInput = document.getElementById("stop");
+        const riskInput = document.getElementById("maxRisk");
+        const resultDiv = document.getElementById("result");
+
+        function calculate() {
+            const delta = parseFloat(deltaInput.value);
+            const stop = parseFloat(stopInput.value);
+            const maxRisk = parseFloat(riskInput.value);
+
+            if (isNaN(delta) || isNaN(stop) || isNaN(maxRisk)) return;
+
+            const lossPerContract = delta * stop * 100;
+            const contracts = Math.floor(maxRisk / lossPerContract);
+
+            resultDiv.innerHTML = `
+                <p>Est. Loss per Contract: $${lossPerContract.toFixed(2)}</p>
+                <p>Contracts to Buy: ${contracts}</p>
+            `;
+        }
+
+        deltaInput.addEventListener("input", calculate);
+        stopInput.addEventListener("input", calculate);
+        riskInput.addEventListener("input", calculate);
+
+        calculate();  // Initial calculation
+    </script>
+</body>
+</html>
