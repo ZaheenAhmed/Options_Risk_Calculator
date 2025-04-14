@@ -46,4 +46,75 @@
 </head>
 <body>
   <div class="container">
-    <h1>Options Risk
+    <h1>Options Risk Calculator</h1>
+    <label for="delta">Delta (0.30 - 0.50):</label>
+    <input type="number" id="delta" step="0.01" min="0.1" max="1" value="0.4">
+
+    <label for="stop">Chart Stop ($):</label>
+    <input type="number" id="stop" step="0.1" value="2">
+
+    <label for="maxRisk">Max Risk ($):</label>
+    <input type="number" id="maxRisk" step="10" value="100">
+
+    <label for="stockPrice">Stock Price at Purchase ($):</label>
+    <input type="number" id="stockPrice" step="0.1" value="420">
+
+    <label for="targetPrice">Target Stock Price ($):</label>
+    <input type="number" id="targetPrice" step="0.1" value="430">
+
+    <div class="result" id="result">
+      <p>Est. Loss per Contract: $0.00</p>
+      <p>Contracts to Buy: 0</p>
+      <p>Potential Profit per Contract: $0.00</p>
+      <p>R Multiple: 0.00</p>
+    </div>
+  </div>
+
+  <script>
+    const deltaInput = document.getElementById("delta");
+    const stopInput = document.getElementById("stop");
+    const riskInput = document.getElementById("maxRisk");
+    const stockPriceInput = document.getElementById("stockPrice");
+    const targetPriceInput = document.getElementById("targetPrice");
+    const resultDiv = document.getElementById("result");
+
+    function calculate() {
+      const delta = parseFloat(deltaInput.value);
+      const stop = parseFloat(stopInput.value);
+      const maxRisk = parseFloat(riskInput.value);
+      const stockPrice = parseFloat(stockPriceInput.value);
+      const targetPrice = parseFloat(targetPriceInput.value);
+
+      if (isNaN(delta) || isNaN(stop) || isNaN(maxRisk) || isNaN(stockPrice) || isNaN(targetPrice)) return;
+
+      // Calculate loss per contract using the same mechanism.
+      const lossPerContract = delta * stop * 100;
+      // Calculate the number of contracts you can buy given max risk.
+      const contracts = Math.floor(maxRisk / lossPerContract);
+
+      // Calculate potential profit per contract:
+      const potentialProfit = (targetPrice - stockPrice) * delta * 100;
+
+      // Calculate R Multiple: potential profit divided by loss per contract.
+      // Since both loss and profit incorporate delta*100, it simplifies to (targetPrice - stockPrice) / stop.
+      const rMultiple = stop !== 0 ? (targetPrice - stockPrice) / stop : 0;
+
+      resultDiv.innerHTML = `
+        <p>Est. Loss per Contract: $${lossPerContract.toFixed(2)}</p>
+        <p>Contracts to Buy: ${contracts}</p>
+        <p>Potential Profit per Contract: $${potentialProfit.toFixed(2)}</p>
+        <p>R Multiple: ${rMultiple.toFixed(2)}</p>
+      `;
+    }
+
+    // Set event listeners on all inputs for live calculation.
+    deltaInput.addEventListener("input", calculate);
+    stopInput.addEventListener("input", calculate);
+    riskInput.addEventListener("input", calculate);
+    stockPriceInput.addEventListener("input", calculate);
+    targetPriceInput.addEventListener("input", calculate);
+
+    calculate();  // Initial calculation on page load.
+  </script>
+</body>
+</html>
